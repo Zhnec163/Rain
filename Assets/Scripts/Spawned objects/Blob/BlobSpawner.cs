@@ -10,17 +10,16 @@ public class BlobSpawner : Spawner<Blob>
     [field: SerializeField] private int _poolCapacity = 5;
     [field: SerializeField] private int _maxSize = 10;
     
-    public Action<Vector3> BlobDisabled;
-    public Action<int, int> ChangedCountObjects;
+    public event Action<Vector3> BlobDisabled;
     
     private void Awake()
     {
         Pool = new ObjectPool<Blob>
         (
-            createFunc: () => CreateFunc(),
-            actionOnGet: obj => ActionOnGet(obj),
-            actionOnRelease: obj => ActionOnRelease(obj),
-            actionOnDestroy: obj => ActionOnDestroy(obj),
+            createFunc: () => HandleActionOnCreate(),
+            actionOnGet: obj => HandleActionOnGet(obj),
+            actionOnRelease: obj => HandleActionOnRelease(obj),
+            actionOnDestroy: obj => HandleActionOnDestroy(obj),
             defaultCapacity: _poolCapacity,
             maxSize: _maxSize
         );
@@ -28,28 +27,28 @@ public class BlobSpawner : Spawner<Blob>
         StartCoroutine(StartRain());
     }
 
-    protected override Blob CreateFunc()
+    protected override Blob HandleActionOnCreate()
     {
-        Blob blob = Instantiate(SpawnedObject, RandomHelper.GetRandomPositionOver(_ground.transform, transform), Quaternion.identity);
+        Blob blob = Instantiate(Prefab, RandomHelper.GetRandomPositionOver(_ground.transform, transform), Quaternion.identity);
         blob.Init(ReturnDroppedBlob);
         CountCreatedObjects++;
-        ChangedCountObjects.Invoke(CountCreatedObjects, Pool.CountActive);
+        CallOnChangedCountObjects();
         return blob;
     }
         
-    protected override void ActionOnGet(Blob blob)
+    protected override void HandleActionOnGet(Blob blob)
     {
         blob.gameObject.SetActive(true);
-        base.ActionOnGet(blob);
+        base.HandleActionOnGet(blob);
         blob.transform.position = RandomHelper.GetRandomPositionOver(_ground.transform, transform);
         blob.ResetState();
-        ChangedCountObjects.Invoke(CountCreatedObjects, Pool.CountActive);
+        CallOnChangedCountObjects();
     }
     
-    protected override void ActionOnRelease(Blob blob)
+    protected override void HandleActionOnRelease(Blob blob)
     {
         blob.transform.rotation = Quaternion.Euler(Vector3.zero);
-        base.ActionOnRelease(blob);
+        base.HandleActionOnRelease(blob);
     }
     
     public void ReturnDroppedBlob(Blob blob)

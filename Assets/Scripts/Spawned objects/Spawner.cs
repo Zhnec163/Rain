@@ -1,27 +1,30 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Pool;
 
 public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
 {
-    [field: SerializeField] protected T SpawnedObject;
+    [SerializeField] protected T Prefab;
 
-    protected int CountCreatedObjects = 0;
     protected ObjectPool<T> Pool;
-    
+    protected int CountCreatedObjects;
+
+    public virtual event Action<int, int> OnChangedCountObjects;
+
     protected void Init()
     {
         Pool = new ObjectPool<T>
         (
-            createFunc: () => CreateFunc(),
-            actionOnGet: obj => ActionOnGet(obj),
-            actionOnRelease: obj => ActionOnRelease(obj),
-            actionOnDestroy: obj => ActionOnDestroy(obj)
+            createFunc: () => HandleActionOnCreate(),
+            actionOnGet: obj => HandleActionOnGet(obj),
+            actionOnRelease: obj => HandleActionOnRelease(obj),
+            actionOnDestroy: obj => HandleActionOnDestroy(obj)
         );
     }
 
-    protected abstract T CreateFunc();
+    protected abstract T HandleActionOnCreate();
 
-    protected virtual void ActionOnGet(T spawnedObject)
+    protected virtual void HandleActionOnGet(T spawnedObject)
     {
         if (spawnedObject.TryGetComponent(out Rigidbody rigidbody))
         {
@@ -32,12 +35,12 @@ public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
         spawnedObject.transform.rotation = Quaternion.Euler(Vector3.zero);
     }
 
-    protected virtual void ActionOnRelease(T spawnedObject)
+    protected virtual void HandleActionOnRelease(T spawnedObject)
     {
         spawnedObject.gameObject.SetActive(false);
     }
 
-    protected virtual void ActionOnDestroy(T spawnedObject)
+    protected virtual void HandleActionOnDestroy(T spawnedObject)
     {
         Destroy(spawnedObject.gameObject);
     }
@@ -45,5 +48,10 @@ public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
     protected void Release(T spawnedObject)
     {
         Pool.Release(spawnedObject);
+    }
+
+    protected void CallOnChangedCountObjects()
+    {
+        OnChangedCountObjects?.Invoke(CountCreatedObjects, Pool.CountActive);
     }
 }

@@ -4,36 +4,34 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshRenderer), typeof(SphereCollider))]
 public class Bomb : MonoBehaviour
 {
     [SerializeField] private float _explosionForce = 400.0f;
     [SerializeField] private float _radius = 20.0f;
 
     private MeshRenderer _meshRenderer;
-    private int _lifetime;
     private SphereCollider _collider;
-    
-    public Action<Bomb> Exploded;
+    private int _lifetime;
+
+    public event Action<Bomb> Exploded;
 
     private void Awake()
     {
-        if (TryGetComponent(out MeshRenderer meshRenderer))
-            _meshRenderer = meshRenderer;
-        
-        if (TryGetComponent(out SphereCollider collider))
-            _collider = collider;
+        _meshRenderer = GetComponent<MeshRenderer>();
+        _collider = GetComponent<SphereCollider>();
     }
-    
+
     private void OnDisable()
     {
         Exploded = null;
     }
-    
+
     public void Init(Action<Bomb> exploded)
     {
         Exploded = exploded;
     }
-    
+
     public void Activate(float speedColorChange)
     {
         StartCoroutine(ColorChanging(speedColorChange));
@@ -44,10 +42,11 @@ public class Bomb : MonoBehaviour
         while (_meshRenderer.material.color.a > 0)
         {
             float a = Mathf.MoveTowards(_meshRenderer.material.color.a, 0, speed * Time.deltaTime);
-            _meshRenderer.material.color = new Color(_meshRenderer.material.color.r, _meshRenderer.material.color.g, _meshRenderer.material.color.b, a);
+            _meshRenderer.material.color = new Color(_meshRenderer.material.color.r, _meshRenderer.material.color.g,
+                _meshRenderer.material.color.b, a);
             yield return null;
         }
-        
+
         StartCoroutine(Explode());
     }
 
@@ -77,9 +76,6 @@ public class Bomb : MonoBehaviour
                 rigidbodies.Add(rigidbody);
         }
 
-        if (rigidbodies.Count > 0)
-            return true;
-        
-        return false;
+        return rigidbodies.Count > 0;
     }
 }

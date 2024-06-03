@@ -6,17 +6,16 @@ public class Blob : MonoBehaviour
     private MeshRenderer _meshRenderer;
     private Color _defaultColor;
     private bool _isDropped;
-
-    private Action<Blob> Dropped;
+    private Action<Blob> _dropped;
 
     private void OnDestroy()
     {
-        Dropped = null;
+        _dropped = null;
     }
     
     public void Init(Action<Blob> dropped)
     {
-        Dropped = dropped;
+        _dropped = dropped;
         
         if (TryGetComponent(out MeshRenderer meshRenderer))
         {
@@ -45,7 +44,7 @@ public class Blob : MonoBehaviour
         {
             _isDropped = true;
             _meshRenderer.material.color = RandomHelper.GetRandomColor();
-            Dropped.Invoke(this);
+            _dropped.Invoke(this);
         }
     }
 }

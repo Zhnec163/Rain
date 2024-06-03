@@ -1,9 +1,12 @@
+using System;
 using TMPro;
 using UnityEngine;
 
-public class SpawnerView : MonoBehaviour
+public abstract class SpawnerView<T> : MonoBehaviour where T : MonoBehaviour
 {
-    [field: SerializeField] private string _spawnedObjectName;
+    [SerializeField] protected Spawner<T> Spawner;
+    
+    [SerializeField] private string _spawnedObjectName;
 
     private TMP_Text _text;
 
@@ -13,6 +16,16 @@ public class SpawnerView : MonoBehaviour
             _text = text;
 
         Draw(0, 0);
+    }
+
+    private void OnEnable()
+    {
+        Spawner.OnChangedCountObjects += Draw;
+    }
+
+    private void OnDisable()
+    {
+        Spawner.OnChangedCountObjects -= Draw;
     }
 
     protected void Draw(int countOfCreatedObjects, int countOfActiveObjects)

@@ -240,15 +240,15 @@ PrefabInstance:
       objectReference: {fileID: 730273508}
     - target: {fileID: 309026654078240116, guid: 744960910c185504f90dbc27fe14acb1, type: 3}
       propertyPath: _maxSize
-      value: 150
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 309026654078240116, guid: 744960910c185504f90dbc27fe14acb1, type: 3}
       propertyPath: _poolCapacity
-      value: 100
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 309026654078240116, guid: 744960910c185504f90dbc27fe14acb1, type: 3}
       propertyPath: _spawnFrequency
-      value: 0.4
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 3151433724825629437, guid: 744960910c185504f90dbc27fe14acb1, type: 3}
       propertyPath: m_Name
@@ -1532,6 +1532,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 136586078}
     m_Modifications:
     - target: {fileID: 464167847596752795, guid: a21f91cdb338e054ba55907b93e680cf, type: 3}
+      propertyPath: Spawner
+      value: 
+      objectReference: {fileID: 1219408197}
+    - target: {fileID: 464167847596752795, guid: a21f91cdb338e054ba55907b93e680cf, type: 3}
       propertyPath: _bombSpawner
       value: 
       objectReference: {fileID: 1219408197}
@@ -1637,6 +1641,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 136586078}
     m_Modifications:
+    - target: {fileID: 3211594875871693212, guid: 36591ff577f3b2947a300b113b9a5533, type: 3}
+      propertyPath: Spawner
+      value: 
+      objectReference: {fileID: 251811394}
     - target: {fileID: 3211594875871693212, guid: 36591ff577f3b2947a300b113b9a5533, type: 3}
       propertyPath: _blobSpawner
       value: 

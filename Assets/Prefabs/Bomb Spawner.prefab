@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aa78172a39b43b681569180b4f8a8d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnedObject: {fileID: 3569985398116440299, guid: 1823ced6439c6414495f1077ad504015, type: 3}
-  _poolCapacity: 5
-  _maxSize: 10
-  _position: {fileID: 0}
+  Prefab: {fileID: 3569985398116440299, guid: 1823ced6439c6414495f1077ad504015, type: 3}
+  _blobSpawner: {fileID: 0}
+  _minLifetime: 2
+  _maxLifetime: 5

@@ -7,31 +7,29 @@ public class BombSpawner : Spawner<Bomb>
     [field: SerializeField] private int _minLifetime = 2;
     [field: SerializeField] private int _maxLifetime = 5;
     
-    public Action<int, int> ChangedCountObjects;
-    
     private void Awake()
     {
         Init();
         _blobSpawner.BlobDisabled += HandleBlobDisabled;
     }
 
-    protected override Bomb CreateFunc()
+    protected override Bomb HandleActionOnCreate()
     {
-        Bomb bomb = Instantiate(SpawnedObject);
+        Bomb bomb = Instantiate(Prefab);
         bomb.Init(Release);
         CountCreatedObjects++;
-        ChangedCountObjects.Invoke(CountCreatedObjects, Pool.CountActive);
+        CallOnChangedCountObjects();
         return bomb;
     }
     
-    protected override void ActionOnGet(Bomb bomb)
+    protected override void HandleActionOnGet(Bomb bomb)
     {
         bomb.gameObject.SetActive(true);
-        bomb.Activate((100 / RandomHelper.GetRandomNumber(_minLifetime, _maxLifetime + 1)) / 100);
-        base.ActionOnGet(bomb);
+        bomb.Activate((100 / RandomHelper.GetRandomNumber(_minLifetime, _maxLifetime + 1)) / 100);//
+        base.HandleActionOnGet(bomb);
     }
 
-    protected override void ActionOnDestroy(Bomb bomb)
+    protected override void HandleActionOnDestroy(Bomb bomb)
     {
         Destroy(bomb.gameObject);
     }
@@ -40,6 +38,6 @@ public class BombSpawner : Spawner<Bomb>
     {
         Bomb bomb = Pool.Get();
         bomb.transform.position = position;
-        ChangedCountObjects.Invoke(CountCreatedObjects, Pool.CountActive);
+        CallOnChangedCountObjects();
     }
 }
