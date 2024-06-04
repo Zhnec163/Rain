@@ -10,19 +10,19 @@ public class BlobSpawner : Spawner<Blob>
 
     public event Action<Blob> OnBlobDisabled;
 
+    private Coroutine _rain;
     private WaitForSeconds _delay;
-    private bool _isRainRun = true;
 
     private void Awake()
     {
         Init();
         _delay = new WaitForSeconds(_spawnFrequency);
-        StartCoroutine(StartRain());
+        _rain = StartCoroutine(BlobsFalling());
     }
 
     private void OnDestroy()
     {
-        _isRainRun = false;
+        StopCoroutine(_rain);
     }
 
     protected override Blob HandleActionOnCreate()
@@ -49,9 +49,11 @@ public class BlobSpawner : Spawner<Blob>
         StartCoroutine(ReturnDropThrough(blob, lifeTime));
     }
 
-    private IEnumerator StartRain()
+    private IEnumerator BlobsFalling()
     {
-        while (_isRainRun)
+        bool isRainRun = true;
+        
+        while (isRainRun)
         {
             Get();
             yield return _delay;
