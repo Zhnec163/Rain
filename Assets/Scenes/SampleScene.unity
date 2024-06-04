@@ -1167,7 +1167,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6812182951140327974, guid: 2a3f855a8e5c1d84dafc24a9c81c6ff3, type: 3}
       propertyPath: _maxSize
-      value: 4
+      value: 2000
       objectReference: {fileID: 0}
     - target: {fileID: 6812182951140327974, guid: 2a3f855a8e5c1d84dafc24a9c81c6ff3, type: 3}
       propertyPath: _blobSpawner
@@ -1175,7 +1175,7 @@ PrefabInstance:
       objectReference: {fileID: 251811394}
     - target: {fileID: 6812182951140327974, guid: 2a3f855a8e5c1d84dafc24a9c81c6ff3, type: 3}
       propertyPath: _poolCapacity
-      value: 4
+      value: 1000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

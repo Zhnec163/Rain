@@ -5,9 +5,12 @@ using UnityEngine.Pool;
 public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
 {
     [SerializeField] protected T Prefab;
+    
+    [SerializeField] private int _poolCapacity = 5;
+    [SerializeField] private int _maxSize = 10;
 
-    protected ObjectPool<T> Pool;
-    protected int CountCreatedObjects;
+    private int CountCreatedObjects;
+    private ObjectPool<T> Pool;
 
     public virtual event Action<int, int> OnChangedCountObjects;
 
@@ -18,7 +21,9 @@ public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
             createFunc: () => HandleActionOnCreate(),
             actionOnGet: obj => HandleActionOnGet(obj),
             actionOnRelease: obj => HandleActionOnRelease(obj),
-            actionOnDestroy: obj => HandleActionOnDestroy(obj)
+            actionOnDestroy: obj => HandleActionOnDestroy(obj),
+            defaultCapacity: _poolCapacity,
+            maxSize: _maxSize
         );
     }
 
@@ -44,6 +49,11 @@ public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
     {
         Destroy(spawnedObject.gameObject);
     }
+    
+    protected T Get()
+    {
+        return Pool.Get();
+    }
 
     protected void Release(T spawnedObject)
     {
@@ -52,6 +62,12 @@ public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
 
     protected void CallOnChangedCountObjects()
     {
+        OnChangedCountObjects?.Invoke(CountCreatedObjects, Pool.CountActive);
+    }
+
+    protected void IncrementCountCreatedObjects()
+    {
+        CountCreatedObjects++;
         OnChangedCountObjects?.Invoke(CountCreatedObjects, Pool.CountActive);
     }
 }

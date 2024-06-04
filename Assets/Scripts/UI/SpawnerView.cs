@@ -2,19 +2,18 @@ using System;
 using TMPro;
 using UnityEngine;
 
+[RequireComponent(typeof(TMP_Text))]
 public abstract class SpawnerView<T> : MonoBehaviour where T : MonoBehaviour
 {
     [SerializeField] protected Spawner<T> Spawner;
-    
+
     [SerializeField] private string _spawnedObjectName;
 
     private TMP_Text _text;
 
     private void Awake()
     {
-        if (TryGetComponent(out TMP_Text text))
-            _text = text;
-
+        _text = GetComponent<TMP_Text>();
         Draw(0, 0);
     }
 

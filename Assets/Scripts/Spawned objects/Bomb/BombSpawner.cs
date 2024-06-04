@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class BombSpawner : Spawner<Bomb>
 {
-    [field: SerializeField] private BlobSpawner _blobSpawner;
-    [field: SerializeField] private int _minLifetime = 2;
-    [field: SerializeField] private int _maxLifetime = 5;
+    [SerializeField] private BlobSpawner _blobSpawner;
+    [SerializeField] private int _minLifetime = 2;
+    [SerializeField] private int _maxLifetime = 5;
     
     private void Awake()
     {
@@ -17,27 +17,22 @@ public class BombSpawner : Spawner<Bomb>
     {
         Bomb bomb = Instantiate(Prefab);
         bomb.Init(Release);
-        CountCreatedObjects++;
-        CallOnChangedCountObjects();
+        IncrementCountCreatedObjects();
         return bomb;
     }
     
     protected override void HandleActionOnGet(Bomb bomb)
     {
         bomb.gameObject.SetActive(true);
-        bomb.Activate((100 / RandomHelper.GetRandomNumber(_minLifetime, _maxLifetime + 1)) / 100);//
+        int maxValue = 100;
+        bomb.Activate(maxValue / RandomHelper.GetRandomNumber(_minLifetime, _maxLifetime + 1) / maxValue);
         base.HandleActionOnGet(bomb);
     }
 
-    protected override void HandleActionOnDestroy(Bomb bomb)
+    private void HandleBlobDisabled(Blob blob)
     {
-        Destroy(bomb.gameObject);
-    }
-
-    private void HandleBlobDisabled(Vector3 position)
-    {
-        Bomb bomb = Pool.Get();
-        bomb.transform.position = position;
+        Bomb bomb = Get();
+        bomb.transform.position = blob.transform.position;
         CallOnChangedCountObjects();
     }
 }
