@@ -44,6 +44,7 @@ public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
     protected virtual void HandleActionOnRelease(T spawnedObject)
     {
         spawnedObject.gameObject.SetActive(false);
+        OnChangedCountObjects?.Invoke(CountCreatedObjects, Pool.CountActive);
     }
 
     protected virtual void HandleActionOnDestroy(T spawnedObject)
