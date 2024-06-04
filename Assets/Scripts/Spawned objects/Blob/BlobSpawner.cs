@@ -8,12 +8,21 @@ public class BlobSpawner : Spawner<Blob>
     [SerializeField] private float _spawnFrequency = 1F;
     [SerializeField] private Ground _ground;
 
-    public event Action<Blob> BlobDisabled;
+    public event Action<Blob> OnBlobDisabled;
+
+    private WaitForSeconds _delay;
+    private bool _isRainRun = true;
 
     private void Awake()
     {
         Init();
+        _delay = new WaitForSeconds(_spawnFrequency);
         StartCoroutine(StartRain());
+    }
+
+    private void OnDestroy()
+    {
+        _isRainRun = false;
     }
 
     protected override Blob HandleActionOnCreate()
@@ -27,19 +36,12 @@ public class BlobSpawner : Spawner<Blob>
     protected override void HandleActionOnGet(Blob blob)
     {
         blob.gameObject.SetActive(true);
-        base.HandleActionOnGet(blob);
         blob.transform.position = RandomHelper.GetRandomPositionOver(_ground.transform, transform);
         blob.ResetState();
-        CallOnChangedCountObjects();
+        base.HandleActionOnGet(blob);
     }
 
-    protected override void HandleActionOnRelease(Blob blob)
-    {
-        blob.transform.rotation = Quaternion.Euler(Vector3.zero);
-        base.HandleActionOnRelease(blob);
-    }
-
-    public void ReturnDroppedBlob(Blob blob)
+    private void ReturnDroppedBlob(Blob blob)
     {
         float minLifeTime = 2F;
         float maxLifeTime = 6F;
@@ -49,21 +51,17 @@ public class BlobSpawner : Spawner<Blob>
 
     private IEnumerator StartRain()
     {
-        // TODO
-        WaitForSeconds waitForSeconds = new WaitForSeconds(_spawnFrequency);
-        bool isRun = true;
-
-        while (isRun)
+        while (_isRainRun)
         {
             Get();
-            yield return waitForSeconds;
+            yield return _delay;
         }
     }
 
     private IEnumerator ReturnDropThrough(Blob blob, float lifeTime)
     {
         yield return new WaitForSeconds(lifeTime);
-        BlobDisabled.Invoke(blob);
+        OnBlobDisabled.Invoke(blob);
         Release(blob);
     }
 }

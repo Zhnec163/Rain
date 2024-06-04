@@ -12,7 +12,7 @@ public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
     private int CountCreatedObjects;
     private ObjectPool<T> Pool;
 
-    public virtual event Action<int, int> OnChangedCountObjects;
+    public event Action<int, int> OnChangedCountObjects;
 
     protected void Init()
     {
@@ -31,13 +31,14 @@ public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
 
     protected virtual void HandleActionOnGet(T spawnedObject)
     {
+        OnChangedCountObjects?.Invoke(CountCreatedObjects, Pool.CountActive);
+        spawnedObject.transform.rotation = Quaternion.Euler(Vector3.zero);
+
         if (spawnedObject.TryGetComponent(out Rigidbody rigidbody))
         {
             rigidbody.velocity = Vector3.zero;
             rigidbody.angularVelocity = Vector3.zero;
         }
-        
-        spawnedObject.transform.rotation = Quaternion.Euler(Vector3.zero);
     }
 
     protected virtual void HandleActionOnRelease(T spawnedObject)
@@ -58,11 +59,6 @@ public abstract class Spawner<T> : MonoBehaviour where T : MonoBehaviour
     protected void Release(T spawnedObject)
     {
         Pool.Release(spawnedObject);
-    }
-
-    protected void CallOnChangedCountObjects()
-    {
-        OnChangedCountObjects?.Invoke(CountCreatedObjects, Pool.CountActive);
     }
 
     protected void IncrementCountCreatedObjects()

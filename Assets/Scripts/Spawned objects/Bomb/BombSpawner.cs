@@ -10,7 +10,12 @@ public class BombSpawner : Spawner<Bomb>
     private void Awake()
     {
         Init();
-        _blobSpawner.BlobDisabled += HandleBlobDisabled;
+        _blobSpawner.OnBlobDisabled += HandleOnBlobDisabled;
+    }
+
+    private void OnDisable()
+    {
+        _blobSpawner.OnBlobDisabled -= HandleOnBlobDisabled;
     }
 
     protected override Bomb HandleActionOnCreate()
@@ -29,10 +34,9 @@ public class BombSpawner : Spawner<Bomb>
         base.HandleActionOnGet(bomb);
     }
 
-    private void HandleBlobDisabled(Blob blob)
+    private void HandleOnBlobDisabled(Blob blob)
     {
         Bomb bomb = Get();
         bomb.transform.position = blob.transform.position;
-        CallOnChangedCountObjects();
     }
 }
